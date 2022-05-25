@@ -214,7 +214,7 @@ level_2 = [
   "X EXXX        XXXX      X",
   "X  XXX  XXXXXXXXXXXXXX  X",
   "X         XXXXXXXXX     X",
-  "XT               XXXXX  X",
+  "X                XXXXX  X",
   "XXXXXXXXXXXX     XXXXX EX",
   "XXXXXXXXXXXXXXX EXXXXX  X",
   "XXXT XXXXXXXXXX         X",
@@ -288,7 +288,7 @@ player2 = Player2()
 walls = []
 
 #Set up level
-setup_maze(levels[2])
+setup_maze(levels[1])
 
 #Keyboard binding
 turtle.listen()
@@ -330,9 +330,9 @@ while True:
         print("*" * 49)
         time.sleep(5)
         os.system("clear")
-
+        
         #Set up level
-        setup_maze(levels[1])
+        setup_maze(levels[2])
         
         #Create level setup function
         def setup_maze(level):
