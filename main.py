@@ -1,5 +1,6 @@
 #Recycling Game By JP
 
+from tkinter import messagebox
 import os
 import time
 import sys
@@ -95,6 +96,21 @@ class Treasure(turtle.Turtle):
   def destroy(self):
     self.goto(2000, 2000)
     self.hideturtle()
+
+#create Gate
+class Gate(turtle.Turtle):
+    def __init__(self, x, y):
+        turtle.Turtle.__init__(self)
+        self.shape("Exit_Door.gif")
+        self.color("pink")
+        self.penup()
+        self.speed(0)
+        self.gold = 100
+        self.goto(x,y)
+ 
+    def destroy(self):
+        self.goto(2000,2000)
+        self.hideturtle()
 
 #Create Enemy
 class Enemy(turtle.Turtle):
@@ -193,7 +209,7 @@ level_1 = [
   "XXX        XXXXXXXXXXXXXX",
   "XXXXXXXXX  XXXXXXXXXXXXXX",
   "XXXXXXXXX               X",
-  "XXT XXXXX               X",
+  "XXTGXXXXX               X",
   "XX  XXXXXXXXXXXXXX EXXXXX",
   "XX   YXXXXXXXXXXXX  XXXXX",
   "XX          XXXX        X",
@@ -236,6 +252,9 @@ treasures = []
 #Add a enemy to list
 enemys = []
 
+#Add Gate to List
+gates = []
+
 #Add maze to maze list
 levels.append(level_1)
 levels.append(level_2)
@@ -274,6 +293,10 @@ def setup_maze(level):
       if character == "E":
         enemys.append(Enemy(screen_x, screen_y))
 
+      #Check if it is G representing gate
+      if character == "G":
+        gates.append(Gate(screen_x, screen_y))
+
 
 
 #Create class instance
@@ -289,6 +312,7 @@ walls = []
 
 #Set up level
 setup_maze(levels[1])
+setup_maze(levels[2])
 
 #Keyboard binding
 turtle.listen()
@@ -330,43 +354,18 @@ while True:
         print("*" * 49)
         time.sleep(5)
         os.system("clear")
-        
-        #Set up level
-        setup_maze(levels[2])
-        
-        #Create level setup function
-        def setup_maze(level):
-          for y in range(len(level)):
-            for x in range(len(level[y])):
-              #Get the character at each x,y coordinates
-              #NOTE the order of y and x in the next line
-              character = level[y] [x]
-              #Calculate the screen x, y coordinates
-              screen_x = -288 + (x * 24)
-              screen_y = 288 - (y *24)
-        
-              #Cheak if it is an X (representing a wall)
-              if character == "X":
-                pen.goto(screen_x, screen_y)
-                pen.stamp()
-                #Add coordinantes to wall list
-                walls.append((screen_x, screen_y))
-              
-              #Cheak if it is a P (representing the player)
-              if character == "P":
-                player.goto(screen_x, screen_y)
-        
-              #Cheak if it is a P (representing the player2)
-              if character == "L":
-                player2.goto(screen_x, screen_y)
-              
-              #Check if it is a T (representing Treasure)
-              if character == "T":
-                treasures.append(Treasure(screen_x, screen_y))
-        
-              #Cheak if it is a E (representing Enemy)
-              if character == "E":
-                enemys.append(Enemy(screen_x, screen_y))
+
+    for gate in gates:
+      if player.is_collision(gate):
+        messagebox.showinfo("Congratulations", "You reached the first gate")
+      pen.clear()
+
+      if maze == ("level1"):
+          setup_maze(levels[2])
+          maze = ("level2")
+      else:
+          turtle.bye()
+
               
     if player2.is_collision(treasure):
       #Add the treasure gold to the player gold
