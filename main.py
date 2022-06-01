@@ -1,6 +1,5 @@
 #Recycling Game By JP
 
-from tkinter import messagebox
 import os
 import time
 import sys
@@ -101,7 +100,7 @@ class Treasure(turtle.Turtle):
 class Gate(turtle.Turtle):
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
-        self.shape("Exit_Door.gif")
+        self.shape("square")
         self.color("pink")
         self.penup()
         self.speed(0)
@@ -191,7 +190,7 @@ levels = [""]
 #Define first level
 level_1 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XP XXXXXXX          XXXXX",
+  "XPGXXXXXXX          XXXXX",
   "X  XXXXXXX  XXXXXX EXXXXX",
   "X       XX  XXXXXX  XXXXX",
   "X       XX  XXX        XX",
@@ -209,7 +208,7 @@ level_1 = [
   "XXX        XXXXXXXXXXXXXX",
   "XXXXXXXXX  XXXXXXXXXXXXXX",
   "XXXXXXXXX               X",
-  "XXTGXXXXX               X",
+  "XXT XXXXX               X",
   "XX  XXXXXXXXXXXXXX EXXXXX",
   "XX   YXXXXXXXXXXXX  XXXXX",
   "XX          XXXX        X",
@@ -312,7 +311,6 @@ walls = []
 
 #Set up level
 setup_maze(levels[1])
-setup_maze(levels[2])
 
 #Keyboard binding
 turtle.listen()
@@ -354,18 +352,6 @@ while True:
         print("*" * 49)
         time.sleep(5)
         os.system("clear")
-
-    for gate in gates:
-      if player.is_collision(gate):
-        messagebox.showinfo("Congratulations", "You reached the first gate")
-      pen.clear()
-
-      if maze == ("level1"):
-          setup_maze(levels[2])
-          maze = ("level2")
-      else:
-          turtle.bye()
-
               
     if player2.is_collision(treasure):
       #Add the treasure gold to the player gold
@@ -416,6 +402,16 @@ while True:
       os.system("clear")
       sys.exit("Thank You For Playing!")
 
+  #Check for player collision with gate
+  #Iterate through gate list
+  for gate in gates:
+    if player.is_collision(gate):
+      print("Good job you found the exit!")
+      levels.remove(level_1)
+      setup_maze(levels[1])
+      
+  
+      
 
     
   #Update screen
