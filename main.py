@@ -237,9 +237,9 @@ level_2 = [
   "XXX        XXXXX  XXXXXXX",
   "XXX  XXXX  XXXXX  XXXXXXX",
   "XXX  XXXX               X",
-  "XXP  XXXX               X",
+  "XX   XXXX               X",
   "XX   XXXXXXXXXXXXX EXXXXX",
-  "XX   YXXXXXXXXXXXX  XXXXX",
+  "XXP  YXXXXXXXXXXXX  XXXXX",
   "XXE         XXXX        X",
   "XXXX                   TX",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -296,7 +296,7 @@ def setup_maze(level):
       if character == "G":
         gates.append(Gate(screen_x, screen_y))
 
-
+   
 
 #Create class instance
 pen = Pen()
@@ -407,12 +407,12 @@ while True:
   for gate in gates:
     if player.is_collision(gate):
       print("Good job you found the exit!")
-      levels.remove(level_1)
-      setup_maze(levels[1])
-      
-  
-      
+      wn.clear()
+      wn.bgcolor("black")
+      setup_maze(levels[2])
+     
 
+      
     
   #Update screen
   wn.update()
