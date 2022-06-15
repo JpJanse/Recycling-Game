@@ -135,7 +135,7 @@ class Player2(turtle.Turtle):
     self.color("red")
     self.penup()
     self.speed(0)
-    self.gold = 75
+    self.gold = 0
 
   def go_up(self):
     #Calculate the spot to move to
@@ -191,14 +191,14 @@ levels = [""]
 #Define first level
 level_1 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XPGXXXXXXX          XXXXX",
+  "XP XXXXXXX          XXXXX",
   "X  XXXXXXX  XXXXXX EXXXXX",
   "X       XX  XXXXXX  XXXXX",
   "X       XX  XXX        XX",
   "XXXXXX  XX  XXX        XX",
   "XXXXXX  XX  XXXXXX  XXXXX",
   "XXXXXX  XX    XXXX  XXXXX",
-  "X EXXX        XXXXT XXXXX",
+  "X EXXX        XXXXTGXXXXX",
   "X  XXX  XXXXXXXXXXXXXXXXX",
   "X         XXXXXXXXXXXXXXX",
   "XT               XXXXXXXX",
@@ -373,7 +373,7 @@ while True:
         print("*" * 49)
         print("*" * 49)
         time.sleep(5)
-        os.system("clear")
+        
               
     if player2.is_collision(treasure):
       #Add the treasure gold to the player gold
@@ -383,6 +383,16 @@ while True:
       treasure.destroy()
       #Remove the treasure from the treasures list
       treasures.remove(treasure)
+      #Checks if player gold is same as 400
+      if player2.gold >= 400:
+        #Displays Win screen
+        print("*" * 49)
+        print("*" * 49)
+        print("*" * 20, "YOU WIN", "*" * 20)
+        print("*" * 49)
+        print("*" * 49)
+        time.sleep(5)
+        
       
   #Check for player collision with enemy
   #Iterate through enemy list
@@ -411,7 +421,7 @@ while True:
   #Check for player collision with player2
   if player.distance(player2) < 5:
     #Remove the treasure gold from the player
-    player.gold -= player2.gold
+    player.gold -= 75
     print("Player Gold: {}".format(player.gold))
     if player.gold >= -400:
       #Displays Lose screen
@@ -421,8 +431,8 @@ while True:
       print("*" * 48)        
       print("*" * 48)
       time.sleep(5)
-      os.system("clear")
-      sys.exit("Thank You For Playing!")
+      
+      
 
   #Check for player collision with gate
   #Iterate through gate list
