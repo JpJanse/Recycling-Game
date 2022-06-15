@@ -1,5 +1,6 @@
 #Recycling Game By JP
 
+from tkinter import messagebox
 import os
 import time
 import sys
@@ -219,8 +220,8 @@ level_1 = [
 #Define second level
 level_2 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XL XXXXXXXE         XXXXX",
-  "XT XXXXXXX  XX   X EXXXXX",
+  "XLTXXXXXXXE         XXXXX",
+  "X  XXXXXXX  XX   X EXXXXX",
   "X       XX  XX   X  XXXXX",
   "X       XXXXXX   X     XX",
   "XXXXXX  XXXXXXXXXX  XT XX",
@@ -229,7 +230,7 @@ level_2 = [
   "X EXXX        XXXX      X",
   "X  XXX  XXXXXXXXXXXXXX  X",
   "X         XXXXXXXXX     X",
-  "X                XXXXX  X",
+  "X                XX     X",
   "XXXXXXXXXXXX     XXXXX EX",
   "XXXXXXXXXXXXXXX EXXXXX  X",
   "XXXT XXXXXXXXXX         X",
@@ -237,9 +238,9 @@ level_2 = [
   "XXX        XXXXX  XXXXXXX",
   "XXX  XXXX  XXXXX  XXXXXXX",
   "XXX  XXXX               X",
-  "XX   XXXX               X",
+  "XXP  XXXX               X",
   "XX   XXXXXXXXXXXXX EXXXXX",
-  "XXP  YXXXXXXXXXXXX  XXXXX",
+  "XX   YXXXXXXXXXXXX  XXXXX",
   "XXE         XXXX        X",
   "XXXX                   TX",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -260,6 +261,28 @@ levels.append(level_2)
 
 #Create level setup function
 def setup_maze(level):
+  global player
+  global player2
+  global walls
+  player = Player()
+  player2 = Player2()
+
+  #Keyboard binding
+  turtle.listen()
+  turtle.onkey(player.go_left,"a")
+  turtle.onkey(player.go_right,"d")
+  turtle.onkey(player.go_up,"w")
+  turtle.onkey(player.go_down,"s")
+    
+  #Keyboard binding
+  turtle.listen()
+  turtle.onkey(player2.go_left,"Left")
+  turtle.onkey(player2.go_right,"Right")
+  turtle.onkey(player2.go_up,"Up")
+  turtle.onkey(player2.go_down,"Down")
+
+  walls = []
+
   for y in range(len(level)):
     for x in range(len(level[y])):
       #Get the character at each x,y coordinates
@@ -295,7 +318,6 @@ def setup_maze(level):
       #Check if it is G representing gate
       if character == "G":
         gates.append(Gate(screen_x, screen_y))
-
    
 
 #Create class instance
@@ -406,13 +428,13 @@ while True:
   #Iterate through gate list
   for gate in gates:
     if player.is_collision(gate):
-      print("Good job you found the exit!")
+      messagebox.showinfo("Congratulations", "You reached the first gate")
       wn.clear()
       wn.bgcolor("black")
+      enemys.clear()
+      treasures.clear()
       setup_maze(levels[2])
-     
 
-      
     
   #Update screen
   wn.update()
