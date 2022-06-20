@@ -112,6 +112,20 @@ class Gate(turtle.Turtle):
         self.goto(2000,2000)
         self.hideturtle()
 
+class Door(turtle.Turtle):
+    def __init__(self, x, y):
+        turtle.Turtle.__init__(self)
+        self.shape("square")
+        self.color("brown")
+        self.penup()
+        self.speed(0)
+        self.gold = 100
+        self.goto(x,y)
+ 
+    def destroy(self):
+        self.goto(2000,2000)
+        self.hideturtle()
+
 #Create Enemy
 class Enemy(turtle.Turtle):
   def __init__(self, x, y):
@@ -191,14 +205,14 @@ levels = [""]
 #Define first level
 level_1 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XP XXXXXXX          XXXXX",
+  "XPGXXXXXXX          XXXXX",
   "X  XXXXXXX  XXXXXX EXXXXX",
   "X       XX  XXXXXX  XXXXX",
   "X       XX  XXX        XX",
   "XXXXXX  XX  XXX        XX",
   "XXXXXX  XX  XXXXXX  XXXXX",
   "XXXXXX  XX    XXXX  XXXXX",
-  "X EXXX        XXXXTGXXXXX",
+  "X EXXX        XXXXT XXXXX",
   "X  XXX  XXXXXXXXXXXXXXXXX",
   "X         XXXXXXXXXXXXXXX",
   "XT               XXXXXXXX",
@@ -237,12 +251,41 @@ level_2 = [
   "XXX      XXXXXX         X",
   "XXX        XXXXX  XXXXXXX",
   "XXX  XXXX  XXXXX  XXXXXXX",
-  "XXX  XXXX               X",
+  "XXX  XXXX              EX",
   "XXP  XXXX               X",
-  "XX   XXXXXXXXXXXXX EXXXXX",
+  "XXD  XXXXXXXXXXXXX EXXXXX",
   "XX   YXXXXXXXXXXXX  XXXXX",
-  "XXE         XXXX        X",
+  "XXE        EXXXX        X",
   "XXXX                   TX",
+  "XXXXXXXXXXXXXXXXXXXXXXXXX",
+]
+
+#Define third level
+level_3 = [
+  "XXXXXXXXXXXXXXXXXXXXXXXXX",
+  "XP EE     EET           X",
+  "X  EE  EEEEEEEE  EE     X",
+  "X  EE  EE    EE  EEEE   X",
+  "X            EEEEEET    X",
+  "X  EEEEEEEE    EEEEEE   X",
+  "X     EE       EE       X",
+  "XEE  EEEEEE  EEEE   EEEEX",
+  "X    EE        EE       X",
+  "X  EEEEEE  EE  EEEEEE   X",
+  "X  EE      EE  EE       X",
+  "X  EEEE  EEEEEEEE   EEEEX",
+  "X    EE        EE       X",
+  "XEEEEEEEEEEEE  EEEEEE   X",
+  "X              EE       X",
+  "X  EEEEEEEEEE  EE   EEEEX",
+  "X     EE       EE       X",
+  "X  EEEEEEEEEE  EEEEEE   X",
+  "X  EE   LEE    EE       X",
+  "X  EE  EEEEEE  EE   EEEEX",
+  "X      EET     EE       X",
+  "X  EEEEEEEEEEEEEE TEE   X",
+  "X    EE        EEEEEE   X",
+  "X        EEEE           X",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
@@ -255,9 +298,14 @@ enemys = []
 #Add Gate to List
 gates = []
 
+#Add A Second Gate to List
+second_gates = []
+
+
 #Add maze to maze list
 levels.append(level_1)
 levels.append(level_2)
+levels.append(level_3)
 
 #Create level setup function
 def setup_maze(level):
@@ -318,6 +366,10 @@ def setup_maze(level):
       #Check if it is G representing gate
       if character == "G":
         gates.append(Gate(screen_x, screen_y))
+        
+      #Check if it is D representing secound gate
+      if character == "D":
+        second_gates.append(Door(screen_x, screen_y))
    
 
 #Create class instance
@@ -431,19 +483,59 @@ while True:
       print("*" * 48)        
       print("*" * 48)
       time.sleep(5)
+      sys.exit("Good Bye!")
       
+    #Remove the treasure gold from the player
+    player2.gold -= 75
+    print("Player2 Gold: {}".format(player.gold))
+    if player2.gold >= -399:
+      #Displays Lose screen
+      print("*" * 48)
+      print("*" * 48)
+      print("*" * 19, "YOU LOSE", "*" * 19)
+      print("*" * 48)        
+      print("*" * 48)
+      time.sleep(5)
+      sys.exit("Good Bye!")
+
+    #Remove the treasure gold from the player
+    player.gold -= 75
+    print("Player Gold: {}".format(player.gold))
+    if player.gold >= -399:
+      #Displays Lose screen
+      print("*" * 48)
+      print("*" * 48)
+      print("*" * 19, "YOU LOSE", "*" * 19)
+      print("*" * 48)        
+      print("*" * 48)
+      time.sleep(5)
+      sys.exit("Good Bye!")
       
 
   #Check for player collision with gate
   #Iterate through gate list
   for gate in gates:
     if player.is_collision(gate):
-      messagebox.showinfo("Congratulations", "You reached the first gate")
+      messagebox.showinfo("You Have Reached Gate!", "Good Job On Getting To Level 2!")
       wn.clear()
       wn.bgcolor("black")
       enemys.clear()
       treasures.clear()
       setup_maze(levels[2])
+
+  #Check for player collision with gate
+  #Iterate through gate list
+  for door in second_gates:
+    if player.is_collision(door):
+      messagebox.showinfo("You Have Reached Door!", "Be Careful, This Level Has Some Spikey Walls")
+      print("E")
+      wn.clear()
+      wn.bgcolor("black")
+      enemys.clear()
+      treasures.clear()
+      setup_maze(levels[3])
+        
+
 
     
   #Update screen
