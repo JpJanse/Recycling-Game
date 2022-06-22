@@ -127,6 +127,20 @@ class Door(turtle.Turtle):
         self.goto(2000,2000)
         self.hideturtle()
 
+class Door2(turtle.Turtle):
+    def __init__(self, x, y):
+        turtle.Turtle.__init__(self)
+        self.shape("triangle")
+        self.color("red")
+        self.penup()
+        self.speed(0)
+        self.gold = 100
+        self.goto(x,y)
+ 
+    def destroy(self):
+        self.goto(2000,2000)
+        self.hideturtle()
+
 #Create Enemy
 class Enemy(turtle.Turtle):
   def __init__(self, x, y):
@@ -159,13 +173,13 @@ class Enemy(turtle.Turtle):
     #check if player is close
     #If so, go in that direction
     if self.is_close(player):
-      if player.scor() < self.scor():
+      if player.xcor() < self.xcor():
         self.direction = "left"
-      elif player.scor() > self.scor():
+      elif player.xcor() > self.xcor():
         self.direction = "right"
-      elif player.scor() < self.scor():
+      elif player.ycor() < self.ycor():
         self.direction = "down"
-      elif player.scor() > self.scor():
+      elif player.ycor() > self.ycor():
         self.direction = "up"
 
     #claculate the spot to move to
@@ -320,7 +334,7 @@ level_3 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
   "XP EE     EET           X",
   "X  EE  EEEEEEEE  EE     X",
-  "X  EE  EE    EE  EEEE   X",
+  "X  EE  EE    EEF EEEE   X",
   "X            EEEEEET    X",
   "X  EEEEEEEE    EEEEEE   X",
   "X     EE       EE       X",
@@ -344,9 +358,22 @@ level_3 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
-#Define third level
-level_3 = [
+#Define Fourth level
+level_4 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
+  "X           P           X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X         EE EE         X",
+  "X         EE EE         X",
+  "XEEEEEEEEEEETEEEEEEEEEEEX",
+  "X         EE EE         X",
+  "X         EE EE         X",
   "X                       X",
   "X                       X",
   "X                       X",
@@ -356,20 +383,7 @@ level_3 = [
   "X                       X",
   "X                       X",
   "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
+  "X           L           X",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
@@ -385,11 +399,15 @@ gates = []
 #Add A Second Gate to List
 second_gates = []
 
+#Add A Second Gate to List
+third_gates = []
+
 
 #Add maze to maze list
 levels.append(level_1)
 levels.append(level_2)
 levels.append(level_3)
+levels.append(level_4)
 
 #Create level setup function
 def setup_maze(level):
@@ -454,6 +472,9 @@ def setup_maze(level):
       #Check if it is D representing secound gate
       if character == "D":
         second_gates.append(Door(screen_x, screen_y))
+
+      if character == "F":
+        third_gates.append(Door2(screen_x, screen_y))
    
 
 #Create class instance
@@ -501,7 +522,7 @@ while True:
       #Remove the treasure from the treasures list
       treasures.remove(treasure)
       #Checks if player gold is same as 400
-      if player.gold >= 400:
+      if player.gold > 400:
         #Displays Win screen
         print("*" * 49)
         print("*" * 49)
@@ -510,7 +531,7 @@ while True:
         print("*" * 49)
         time.sleep(5)
         
-              
+         
     if player2.is_collision(treasure):
       #Add the treasure gold to the player gold
       player2.gold += treasure.gold
@@ -520,7 +541,7 @@ while True:
       #Remove the treasure from the treasures list
       treasures.remove(treasure)
       #Checks if player gold is same as 400
-      if player2.gold >= 400:
+      if player2.gold > 400:
         #Displays Win screen
         print("*" * 49)
         print("*" * 49)
@@ -559,7 +580,7 @@ while True:
     #Remove the treasure gold from the player
     player.gold -= 75
     print("Player Gold: {}".format(player.gold))
-    if player.gold >= -400:
+    if player.gold > -399:
       #Displays Lose screen
       print("*" * 48)
       print("*" * 48)
@@ -572,7 +593,7 @@ while True:
     #Remove the treasure gold from the player
     player2.gold -= 75
     print("Player2 Gold: {}".format(player.gold))
-    if player2.gold >= -399:
+    if player2.gold > -399:
       #Displays Lose screen
       print("*" * 48)
       print("*" * 48)
@@ -585,7 +606,7 @@ while True:
     #Remove the treasure gold from the player
     player.gold -= 75
     print("Player Gold: {}".format(player.gold))
-    if player.gold >= -399:
+    if player.gold > -399:
       #Displays Lose screen
       print("*" * 48)
       print("*" * 48)
@@ -607,8 +628,8 @@ while True:
       treasures.clear()
       setup_maze(levels[2])
 
-  #Check for player collision with gate
-  #Iterate through gate list
+  #Check for player collision with door
+  #Iterate through second_door list
   for door in second_gates:
     if player.is_collision(door):
       messagebox.showinfo("You Have Reached Door!", "Be Careful, This Level Has Some Spikey Walls")
@@ -618,9 +639,19 @@ while True:
       enemys.clear()
       treasures.clear()
       setup_maze(levels[3])
+
+  #Check for player collision with door
+  #Iterate through third_door list
+  for door in third_gates:
+    if player.is_collision(door):
+      messagebox.showinfo("You Have Reached Door!", "Be Careful, This Level Has Some Spikey Walls")
+      print("E")
+      wn.clear()
+      wn.bgcolor("black")
+      enemys.clear()
+      treasures.clear()
+      setup_maze(levels[4])
+
         
-
-
-    
   #Update screen
   wn.update()
