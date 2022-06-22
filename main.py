@@ -6,6 +6,7 @@ import time
 import sys
 import math
 import turtle
+import random
 
 
 wn = turtle.Screen()
@@ -90,7 +91,7 @@ class Treasure(turtle.Turtle):
     self.color("green")
     self.penup()
     self.speed(0)
-    self.gold = 100
+    self.gold = 150
     self.goto(x, y)
 
   def destroy(self):
@@ -102,7 +103,7 @@ class Gate(turtle.Turtle):
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
         self.shape("square")
-        self.color("pink")
+        self.color("lightgrey")
         self.penup()
         self.speed(0)
         self.gold = 100
@@ -116,7 +117,7 @@ class Door(turtle.Turtle):
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
         self.shape("square")
-        self.color("brown")
+        self.color("lightgrey")
         self.penup()
         self.speed(0)
         self.gold = 100
@@ -134,8 +135,62 @@ class Enemy(turtle.Turtle):
     self.color("red")
     self.penup()
     self.speed(0)
-    self.gold = 50
+    self.gold = 100
     self.goto(x, y)
+    self.direction = random.choice(["up", "down", "left", "right",])
+
+  def move(self):
+    if self.direction == "up":
+      dx = 0
+      dy = 24
+    elif self.direction == "down":
+      dx = 0
+      dy = -24
+    elif self.direction == "left":
+      dx = -24
+      dy = 0
+    elif self.direction == "right":
+      dx = 24
+      dy = 0
+    else:
+      dx = 0
+      dy = 0
+
+    #check if player is close
+    #If so, go in that direction
+    if self.is_close(player):
+      if player.scor() < self.scor():
+        self.direction = "left"
+      elif player.scor() > self.scor():
+        self.direction = "right"
+      elif player.scor() < self.scor():
+        self.direction = "down"
+      elif player.scor() > self.scor():
+        self.direction = "up"
+
+    #claculate the spot to move to
+    move_to_x = self.xcor() + dx
+    move_to_y = self.ycor() + dy
+
+    #check if the space has a wall
+    if (move_to_x, move_to_y) not in walls:
+      self.goto(move_to_x, move_to_y)
+    else:
+      #choose a different direction
+      self.direction = random.choice(["up", "down", "left", "right",])
+
+    #set timer to move next time
+    turtle.ontimer(self.move, t=random.radiant(100, 300))
+  
+  def is_close(self, other):
+    a = self.xcor()-other.xcor()
+    b = self.xcor()-other.xcor()
+    distance = math.sqrt((a ** 2) + (b ** 2) )
+
+    if distance < 75:
+      return True
+    else:
+      return False
 
   def destroy(self):
     self.goto(2000, 2000)
@@ -205,14 +260,14 @@ levels = [""]
 #Define first level
 level_1 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XPGXXXXXXX          XXXXX",
+  "XP XXXXXXX          XXXXX",
   "X  XXXXXXX  XXXXXX EXXXXX",
   "X       XX  XXXXXX  XXXXX",
   "X       XX  XXX        XX",
   "XXXXXX  XX  XXX        XX",
   "XXXXXX  XX  XXXXXX  XXXXX",
   "XXXXXX  XX    XXXX  XXXXX",
-  "X EXXX        XXXXT XXXXX",
+  "X EXXX        XXXXTGXXXXX",
   "X  XXX  XXXXXXXXXXXXXXXXX",
   "X         XXXXXXXXXXXXXXX",
   "XT               XXXXXXXX",
@@ -240,7 +295,7 @@ level_2 = [
   "X       XXXXXX   X     XX",
   "XXXXXX  XXXXXXXXXX  XT XX",
   "XXXXXX  XX  XXXXXX  XXXXX",
-  "X  XXX  XX    XXXX      X",
+  "X DXXX  XX    XXXX      X",
   "X EXXX        XXXX      X",
   "X  XXX  XXXXXXXXXXXXXX  X",
   "X         XXXXXXXXX     X",
@@ -253,7 +308,7 @@ level_2 = [
   "XXX  XXXX  XXXXX  XXXXXXX",
   "XXX  XXXX              EX",
   "XXP  XXXX               X",
-  "XXD  XXXXXXXXXXXXX EXXXXX",
+  "XX   XXXXXXXXXXXXX EXXXXX",
   "XX   YXXXXXXXXXXXX  XXXXX",
   "XXE        EXXXX        X",
   "XXXX                   TX",
@@ -286,6 +341,35 @@ level_3 = [
   "X  EEEEEEEEEEEEEE TEE   X",
   "X    EE        EEEEEE   X",
   "X        EEEE           X",
+  "XXXXXXXXXXXXXXXXXXXXXXXXX",
+]
+
+#Define third level
+level_3 = [
+  "XXXXXXXXXXXXXXXXXXXXXXXXX",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
+  "X                       X",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
