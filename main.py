@@ -1,7 +1,6 @@
 #Recycling Game By JP
 
 from tkinter import messagebox
-import os
 import time
 import sys
 import math
@@ -20,68 +19,103 @@ class Pen(turtle.Turtle):
   def __init__(self):
     turtle.Turtle.__init__(self)
     self.shape("square")
-    self.color("white")
+    self.color("black")
     self.penup()
     self.speed(0)
 
+class Muro(turtle.Turtle):
+    def __init__(self, x, y):
+        turtle.Turtle.__init__(self)
+        self.shape("square")
+        self.color(color_1)
+        self.penup()
+        self.speed(0)
+        self.gold = 100
+        self.goto(x, y)
+
+    def destroy(self):
+        self.goto(2000, 2000)
+        self.hideturtle()
+
+    def change_color(self):
+         self.color(color_2)
+
+    def change_color_again(self):
+        self.color(color_1)
+
+color_1 = ("black")
+color_2 = ("gold")
+    
 #create player
 class Player(turtle.Turtle):
-  def __init__(self):
-    turtle.Turtle.__init__(self)
-    self.shape("square")
-    self.color("blue")
-    self.penup()
-    self.speed(0)
-    self.gold = 0
+    def __init__(self):
+        turtle.Turtle.__init__(self)
+        self.shape("square")
+        self.color("blue")
+        self.penup()
+        self.speed(0)
+        self.gold = 0
 
-  def go_up(self):
-    #Calculate the spot to move to
-    move_to_x = player.xcor()
-    move_to_y = player.ycor() + 24
+    def go_up(self):
+        move_to_x = player.xcor()
+        move_to_y = player.ycor() + 24
+        
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
+        
+        
+    def go_down(self):
+        move_to_x = player.xcor()
+        move_to_y = player.ycor() - 24
+        
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
+        
 
-    #Check if the space has a wall
-    if (move_to_x, move_to_y) not in walls:
-      self.goto(move_to_x, move_to_y)
+    def go_left(self):
+        move_to_x = player.xcor() - 24
+        move_to_y = player.ycor() 
+        
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
+        
 
-  def go_down(self):
-    #Calculate the spot to move to
-    move_to_x = player.xcor()
-    move_to_y = player.ycor() - 24
+    def go_right(self):
+        move_to_x = player.xcor() + 24
+        move_to_y = player.ycor() 
+        
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
 
-    #Check if the space has a wall
-    if (move_to_x, move_to_y) not in walls:
-      self.goto(move_to_x, move_to_y)
+    def is_close_to(self, other):
+        a = self.xcor()-other.xcor()
+        b = self.ycor()-other.ycor()
+        distance = math.sqrt((a ** 2) + (b ** 2))
 
+        if distance < 125:
+            return True
+        else:
+            return False
 
-  def go_left(self):
-    #Calculate the spot to move to
-    move_to_x = player.xcor() - 24
-    move_to_y = player.ycor()
+    def is_far_away_from(self, other):
+        a = self.xcor()-other.xcor()
+        b = self.ycor()-other.ycor()
+        distance = math.sqrt((a ** 2) + (b ** 2))
 
-    
-    #Check if the space has a wall
-    if (move_to_x, move_to_y) not in walls:
-      self.goto(move_to_x, move_to_y)
+        if distance > 125:
+            return True
+        else:
+            return False
 
+    def is_collision(self, other):
+        a = self.xcor()-other.xcor()
+        b = self.ycor()-other.ycor()
+        distance = math.sqrt((a ** 2) + (b ** 2))
 
-  def go_right(self):
-    #Calculate the spot to move to
-    move_to_x = player.xcor() + 24
-    move_to_y = player.ycor()
-
-    #Check if the space has a wall
-    if (move_to_x, move_to_y) not in walls:
-      self.goto(move_to_x, move_to_y)
-
-  def is_collision(self, other):
-    a = self.xcor()-other.xcor()
-    b = self.ycor()-other.ycor()
-    distance = math.sqrt((a ** 2) + (b ** 2) )
-
-    if distance < 5:
-      return True
-    else:
-      return False
+        if distance < 5:
+            return True
+        else:
+            return False
 
 #Create Treasure
 class Treasure(turtle.Turtle):
@@ -143,72 +177,68 @@ class Door2(turtle.Turtle):
 
 #Create Enemy
 class Enemy(turtle.Turtle):
-  def __init__(self, x, y):
-    turtle.Turtle.__init__(self)
-    self.shape("triangle")
-    self.color("red")
-    self.penup()
-    self.speed(0)
-    self.gold = 100
-    self.goto(x, y)
-    self.direction = random.choice(["up", "down", "left", "right",])
+    def __init__(self, x, y):
+        turtle.Turtle.__init__(self)
+        self.shape("circle")
+        self.color("red")
+        self.penup()
+        self.speed(0)
+        self.gold = 100
+        self.goto(x, y)
+        self.direction = random.choice(["up", "down", "left", "right"])
 
-  def move(self):
-    if self.direction == "up":
-      dx = 0
-      dy = 24
-    elif self.direction == "down":
-      dx = 0
-      dy = -24
-    elif self.direction == "left":
-      dx = -24
-      dy = 0
-    elif self.direction == "right":
-      dx = 24
-      dy = 0
-    else:
-      dx = 0
-      dy = 0
+    def move(self):
+        if self.direction == "up":
+            dx = 0
+            dy = 24
+        elif self.direction == "down":
+            dx = 0
+            dy = -24
+        elif self.direction == "left":
+            dx = -24
+            dy = 0
+        elif self.direction == "right":
+            dx = 24
+            dy = 0
+        else:
+            dx = 0
+            dy = 0
 
-    #check if player is close
-    #If so, go in that direction
-    if self.is_close(player):
-      if player.xcor() < self.xcor():
-        self.direction = "left"
-      elif player.xcor() > self.xcor():
-        self.direction = "right"
-      elif player.ycor() < self.ycor():
-        self.direction = "down"
-      elif player.ycor() > self.ycor():
-        self.direction = "up"
 
-    #claculate the spot to move to
-    move_to_x = self.xcor() + dx
-    move_to_y = self.ycor() + dy
+        if self.is_close(player):
+            if player.xcor() < self.xcor():
+                self.direction = "left"
+            elif player.xcor() > self.xcor():
+                self.direction = "right"
+            elif player.ycor() < self.xcor():
+                self.direction = "down"
+            elif player.ycor() > self.ycor():
+                self.direction = "up"    
+           
 
-    #check if the space has a wall
-    if (move_to_x, move_to_y) not in walls:
-      self.goto(move_to_x, move_to_y)
-    else:
-      #choose a different direction
-      self.direction = random.choice(["up", "down", "left", "right",])
+        move_to_x = self.xcor() + dx
+        move_to_y = self.ycor() + dy
 
-    #set timer to move next time
-    turtle.ontimer(self.move, t=random.radiant(100, 300))
-  
-  def is_close(self, other):
-    a = self.xcor()-other.xcor()
-    b = self.xcor()-other.xcor()
-    distance = math.sqrt((a ** 2) + (b ** 2) )
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
+        else:
+            self.direction = random.choice(["up", "down", "left", "right"])   
 
-    if distance < 75:
-      return True
-    else:
-      return False
+        turtle.ontimer(self.move, t=random.randint(100, 300))
 
-  def destroy(self):
-    self.goto(2000, 2000)
-    self.hideturtle()
+    def is_close(self, other):
+        a = self.xcor()-other.xcor()
+        b = self.ycor()-other.ycor()
+        distance = math.sqrt(( a ** 2) + ( b ** 2 ))
+
+        if distance < 50:
+            return True
+        else:
+            return False
+
+    def destroy(self):
+        self.goto(2000, 2000)
+        self.hideturtle() 
 
 #Create Player 2
 class Player2(turtle.Turtle):
@@ -222,8 +252,8 @@ class Player2(turtle.Turtle):
 
   def go_up(self):
     #Calculate the spot to move to
-    move_to_x = player2.xcor()
-    move_to_y = player2.ycor() + 24
+    move_to_x = self.xcor()
+    move_to_y = self.ycor() + 24
 
     #Check if the space has a wall
     if (move_to_x, move_to_y) not in walls:
@@ -231,8 +261,8 @@ class Player2(turtle.Turtle):
 
   def go_down(self):
     #Calculate the spot to move to
-    move_to_x = player2.xcor()
-    move_to_y = player2.ycor() - 24
+    move_to_x = self.xcor()
+    move_to_y = self.ycor() - 24
 
     #Check if the space has a wall
     if (move_to_x, move_to_y) not in walls:
@@ -241,8 +271,8 @@ class Player2(turtle.Turtle):
 
   def go_left(self):
     #Calculate the spot to move to
-    move_to_x = player2.xcor() - 24
-    move_to_y = player2.ycor()
+    move_to_x = self.xcor() - 24
+    move_to_y = self.ycor()
 
     #Check if the space has a wall
     if (move_to_x, move_to_y) not in walls:
@@ -251,8 +281,8 @@ class Player2(turtle.Turtle):
 
   def go_right(self):
     #Calculate the spot to move to
-    move_to_x = player2.xcor() + 24
-    move_to_y = player2.ycor()
+    move_to_x = self.xcor() + 24
+    move_to_y = self.ycor()
 
     #Check if the space has a wall
     if (move_to_x, move_to_y) not in walls:
@@ -274,87 +304,87 @@ levels = [""]
 #Define first level
 level_1 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XP XXXXXXX          XXXXX",
-  "X  XXXXXXX  XXXXXX EXXXXX",
-  "X       XX  XXXXXX  XXXXX",
-  "X       XX  XXX        XX",
-  "XXXXXX  XX  XXX        XX",
-  "XXXXXX  XX  XXXXXX  XXXXX",
-  "XXXXXX  XX    XXXX  XXXXX",
-  "X EXXX        XXXXTGXXXXX",
-  "X  XXX  XXXXXXXXXXXXXXXXX",
-  "X         XXXXXXXXXXXXXXX",
-  "XT               XXXXXXXX",
-  "XXXXXXXXXXXX     XXXXX EX",
-  "XXXXXXXXXXXXXXX EXXXXX  X",
-  "XXX  XXXXXXXXXX         X",
-  "XXX                    TX",
-  "XXX        XXXXXXXXXXXXXX",
-  "XXXXXXXXX  XXXXXXXXXXXXXX",
-  "XXXXXXXXX               X",
-  "XXT XXXXX               X",
-  "XX  XXXXXXXXXXXXXX EXXXXX",
-  "XX   YXXXXXXXXXXXX  XXXXX",
-  "XX          XXXX        X",
-  "XXXX                   LX",
+  "XMMMMXXXXMMMMMMMMMMMMXXXX",
+  "XM PMMMMMM         EMXXXX",
+  "XM      MM  MMMMMM  MMMXX",
+  "XM      MM  MMM        MX",
+  "XMMMMM  MM  MMM        MX",
+  "XXXXXM  MM  MMMMMM  MMMXX",
+  "XMMMMM  MM    MXXM  MXXXX",
+  "XM EMM        MXXMTGMXXXX",
+  "XM  MM  MMMMMMMXXMMMMXXXX",
+  "XM        MMMMMMMXXXXXXXX",
+  "XMT              MXXMMMMX",
+  "XMMMMMMMMMMM     MXXM EMX",
+  "XXMMMMXXXXXMMMM EMMMM  MX",
+  "XXM  MMMMMMMMMM        MX",
+  "XXM                   TMX",
+  "XXM        MMMMMMMMMMMMMX",
+  "XXMMMMMMM  MMMMMMMMMMMMMX",
+  "XMMMMXXXM              MX",
+  "XMT MXXXM              MX",
+  "XM  MMMMMMMMMMMMMM EMMMMX",
+  "XM        MMMM         MX",
+  "XM                     MX",
+  "XMMMMMMMMMMMMMMMMMMMMMMMX",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
 #Define second level
 level_2 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XLTXXXXXXXE         XXXXX",
-  "X  XXXXXXX  XX   X EXXXXX",
-  "X       XX  XX   X  XXXXX",
-  "X       XXXXXX   X     XX",
-  "XXXXXX  XXXXXXXXXX  XT XX",
-  "XXXXXX  XX  XXXXXX  XXXXX",
-  "X DXXX  XX    XXXX      X",
-  "X EXXX        XXXX      X",
-  "X  XXX  XXXXXXXXXXXXXX  X",
-  "X         XXXXXXXXX     X",
-  "X                XX     X",
-  "XXXXXXXXXXXX     XXXXX EX",
-  "XXXXXXXXXXXXXXX EXXXXX  X",
-  "XXXT XXXXXXXXXX         X",
-  "XXX      XXXXXX         X",
-  "XXX        XXXXX  XXXXXXX",
-  "XXX  XXXX  XXXXX  XXXXXXX",
-  "XXX  XXXX              EX",
-  "XXP  XXXX               X",
-  "XX   XXXXXXXXXXXXX EXXXXX",
-  "XX   YXXXXXXXXXXXX  XXXXX",
-  "XXE        EXXXX        X",
-  "XXXX                   TX",
+  "XMMMMXXXXMMMMMMMMMMMMXXXX",
+  "XMLTMMMMMM         EMXXXX",
+  "XM      MM  MM   M  MMMMX",
+  "XM      MM EMM   M     MX",
+  "XMMMMM  MMMMMMMMMM  MT MX",
+  "XMMMMM  MM  MMMMXM  MMMMX",
+  "XMD MM  MM    MXXM     MX",
+  "XME MM        MXXM     MX",
+  "XM  MM  MMMMMMMXXMMMM  MX",
+  "XM        MMMMMMMMM    MX",
+  "XM               MM    MX",
+  "XMMMMMMMMMMM     MMMM EMX",
+  "XXMMMMXXXXXMMMM EMMMM  MX",
+  "XXMT MMMMMXXXXM        MX",
+  "XXM      MMMXXM        MX",
+  "XXM        MXXMM  MMMMMMX",
+  "XXM  MMMM  MMMMM  MMMMMMX",
+  "XMM  MXXM              MX",
+  "XMP  MXXM              MX",
+  "XM   MMMMMMMMMMMMM EMMMMX",
+  "XM        EMMMM     MMMMX",
+  "XME                   TMX",
+  "XMMMMMMMMMMMMMMMMMMMMMMMX",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
 #Define third level
 level_3 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
-  "XP EE     EET           X",
-  "X  EE  EEEEEEEE  EE     X",
-  "X  EE  EE    EEF EEEE   X",
-  "X            EEEEEET    X",
-  "X  EEEEEEEE    EEEEEE   X",
-  "X     EE       EE       X",
-  "XEE  EEEEEE  EEEE   EEEEX",
-  "X    EE        EE       X",
-  "X  EEEEEE  EE  EEEEEE   X",
-  "X  EE      EE  EE       X",
-  "X  EEEE  EEEEEEEE   EEEEX",
-  "X    EE        EE       X",
-  "XEEEEEEEEEEEE  EEEEEE   X",
-  "X              EE       X",
-  "X  EEEEEEEEEE  EE   EEEEX",
-  "X     EE       EE       X",
-  "X  EEEEEEEEEE  EEEEEE   X",
-  "X  EE   LEE    EE       X",
-  "X  EE  EEEEEE  EE   EEEEX",
-  "X      EET     EE       X",
-  "X  EEEEEEEEEEEEEE TEE   X",
-  "X    EE        EEEEEE   X",
-  "X        EEEE           X",
+  "XP XX     XXT           X",
+  "X  XX  XXXXXXXX  XX     X",
+  "X  XX  XX    XXFEXXXX   X",
+  "X            XXXXXXT    X",
+  "X  XXXXXXXX    XXXXXX   X",
+  "X     XX       XX       X",
+  "XXX  XXXXXX  XXXX   XXXXX",
+  "X    XX        XX       X",
+  "X  XXXXXX  XX  XXXXXX   X",
+  "X  XX      XX  XX       X",
+  "X  XXXX  XXXXXXXX   XXXXX",
+  "X   EXX        XX      EX",
+  "XXXXXXXXXXXXX  XXXXXX   X",
+  "X              XX       X",
+  "X  XXXXXXXXXX  XX   XXXXX",
+  "X     XX       XX       X",
+  "X  XXXXXXXXXX  XXXXXX   X",
+  "X  XX   LXX    XX       X",
+  "X  XX  XXXXXX  XX   XXXXX",
+  "X      XXTE    XX       X",
+  "X  XXXXXXXXXXXXXX TXX   X",
+  "X    XX        XXXXXX   X",
+  "X        XXXX           X",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
@@ -362,30 +392,33 @@ level_3 = [
 level_4 = [
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
   "X           P           X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X         EE EE         X",
-  "X         EE EE         X",
-  "XEEEEEEEEEEETEEEEEEEEEEEX",
-  "X         EE EE         X",
-  "X         EE EE         X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
-  "X                       X",
+  "XXXX XX           XX XXXX",
+  "X      X         X      X",
+  "XE      X       X      EX",
+  "XTT      X     X      TTX",
+  "XE        X   X        EX",
+  "X          X X          X",
+  "XXXXXXXXXXXX XXXXXXXXXXXX",
+  "X   TT    EX XE    TT   X",
+  "X   TT    EX XE    TT   X",
+  "X XXXXXXXXXXTXXXXXXXXXX X",
+  "X   TT    EX XE    TT   X",
+  "X   TT    EX XE    TT   X",
+  "X XXXXXXXXXX XXXXXXXXXX X",
+  "X          X X          X",
+  "XE        X   X        EX",
+  "XTT      X     X      TTX",
+  "XE      X       X      EX",
+  "X      X         X      X",
+  "X     X           X     X",
+  "XXX XX             XX XXX",
   "X                       X",
   "X           L           X",
   "XXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
+
+#Add muros to list
+muros = []
 
 #Add a treasure to list
 treasures = []
@@ -414,6 +447,8 @@ def setup_maze(level):
   global player
   global player2
   global walls
+  global muros
+  global enemys
   player = Player()
   player2 = Player2()
 
@@ -431,7 +466,9 @@ def setup_maze(level):
   turtle.onkey(player2.go_up,"Up")
   turtle.onkey(player2.go_down,"Down")
 
+  muros = []
   walls = []
+  enemys = []
 
   for y in range(len(level)):
     for x in range(len(level[y])):
@@ -452,6 +489,12 @@ def setup_maze(level):
       #Cheak if it is a P (representing the player)
       if character == "P":
         player.goto(screen_x, screen_y)
+
+      #Cheak if it is a M (representing the muro)
+      if character == "M":
+        muros.append(Muro(screen_x, screen_y))
+
+        walls.append((screen_x, screen_y))
 
       #Cheak if it is a P (representing the player2)
       if character == "L":
@@ -508,8 +551,24 @@ turtle.onkey(player2.go_down,"Down")
 #Turn off screen updates
 wn.tracer(0)
 
+for enemy in enemys:
+    turtle.ontimer(enemy.move, t=250)
+
+for enemy in enemys:
+         if player.is_collision(enemy):
+             print ("You Died!")
+
 #Main Game Loop
 while True:
+
+  #Check if player is close to muros
+  for muro in muros:
+    if player.is_close_to(muro):
+        muro.change_color()
+        
+    if player.is_far_away_from(muro):
+        muro.change_color_again()
+  
   #Check for player collision with treasure
   #Iterate through treasure list
   for treasure in treasures:
@@ -562,6 +621,7 @@ while True:
       enemy.destroy()
       #remove the enemy from the enemy list
       enemys.remove(enemy)
+
 
   #Check for player collision with enemy
   #Iterate through enemy list
